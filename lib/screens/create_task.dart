@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
@@ -7,7 +9,7 @@ class CreateTaskScreen extends StatefulWidget {
   List taskList;
 
   CreateTaskScreen({Key key, @required this.taskList}) : super(key: key);
-   @override
+  @override
   _CreateTaskScreenState createState() => _CreateTaskScreenState();
 }
 
@@ -22,7 +24,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios),
-          onPressed: (){
+          onPressed: () {
             Navigator.pop(context);
           },
           color: Colors.grey[800],
@@ -63,7 +65,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                 focusedBorder: UnderlineInputBorder(
                     borderSide: BorderSide(color: Colors.blueGrey[100])),
                 hintText: "Task Name",
-                hintStyle:TextStyle(
+                hintStyle: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.w500,
                   color: Colors.grey[400],
@@ -78,13 +80,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
             Container(
               child: Row(
                 children: [
-
                   ///Container for Icon
                   Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
-                        color: Color.fromRGBO(255, 240, 240, 1)
-                    ),
+                        color: Color.fromRGBO(255, 240, 240, 1)),
                     padding: const EdgeInsets.all(16),
                     child: Icon(
                       Icons.calendar_today,
@@ -93,35 +93,37 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                   ),
 
                   ///For spacing
-                  SizedBox(width: 24,),
+                  SizedBox(
+                    width: 24,
+                  ),
 
                   ///For Text
-                  Text("Friday 28, November",
+                  Text(
+                    "Friday 28, November",
                     style: TextStyle(
                         fontSize: 18,
                         height: 1.2,
                         fontWeight: FontWeight.w700,
-                        color: Colors.grey[700]
-                    ),
+                        color: Colors.grey[700]),
                   )
                 ],
               ),
             ),
 
             ///For Spacing
-            SizedBox(height: 16,),
+            SizedBox(
+              height: 16,
+            ),
 
             ///Container for timing tray 2
             Container(
               child: Row(
                 children: [
-
                   ///Container for Icon
                   Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
-                        color: Color.fromRGBO(255, 250, 240, 1)
-                    ),
+                        color: Color.fromRGBO(255, 250, 240, 1)),
                     padding: const EdgeInsets.all(16),
                     child: Icon(
                       Icons.alarm,
@@ -130,16 +132,18 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                   ),
 
                   ///For spacing
-                  SizedBox(width: 24,),
+                  SizedBox(
+                    width: 24,
+                  ),
 
                   ///For Text
-                  Text("1:00 - 3:00 PM",
+                  Text(
+                    "1:00 - 3:00 PM",
                     style: TextStyle(
                         fontSize: 18,
                         height: 1.2,
                         fontWeight: FontWeight.w700,
-                        color: Colors.grey[700]
-                    ),
+                        color: Colors.grey[700]),
                   )
                 ],
               ),
@@ -163,8 +167,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                   Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
-                        color: Color.fromRGBO(255, 250, 240, 1)
-                    ),
+                        color: Color.fromRGBO(255, 250, 240, 1)),
                     padding: const EdgeInsets.all(16),
                     child: Icon(
                       Icons.web_asset,
@@ -173,31 +176,33 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                   ),
 
                   ///For spacing
-                  SizedBox(width: 24,),
+                  SizedBox(
+                    width: 24,
+                  ),
 
                   ///For Text
-                  Text("Work",
+                  Text(
+                    "Work",
                     style: TextStyle(
                         fontSize: 18,
                         height: 1.2,
                         fontWeight: FontWeight.w700,
-                        color: Colors.grey[700]
-                    ),
+                        color: Colors.grey[700]),
                   ),
 
                   Spacer(),
                   IconButton(
                     icon: Icon(Icons.arrow_forward_ios),
-                    onPressed: (){
-
-                    },
+                    onPressed: () {},
                   )
                 ],
               ),
             ),
 
             ///For Spacing
-            SizedBox(height: 16,),
+            SizedBox(
+              height: 16,
+            ),
 
             ///Container for remind
             Container(
@@ -214,8 +219,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                   Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
-                        color: Color.fromRGBO(240, 235, 255, 1)
-                    ),
+                        color: Color.fromRGBO(240, 235, 255, 1)),
                     padding: const EdgeInsets.all(16),
                     child: Icon(
                       Icons.alarm_on,
@@ -224,21 +228,23 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                   ),
 
                   ///For spacing
-                  SizedBox(width: 24,),
+                  SizedBox(
+                    width: 24,
+                  ),
 
                   ///For Text
-                  Text("Remind me",
+                  Text(
+                    "Remind me",
                     style: TextStyle(
                         fontSize: 18,
                         height: 1.2,
                         fontWeight: FontWeight.w700,
-                        color: Colors.grey[700]
-                    ),
+                        color: Colors.grey[700]),
                   ),
 
                   Spacer(),
                   Switch(
-                    onChanged: (value){
+                    onChanged: (value) {
                       setState(() {
                         remindMe = value;
                       });
@@ -261,27 +267,29 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 color: Colors.black,
-                child: Text("CREATE TASK",
+                child: Text(
+                  "CREATE TASK",
                   style: TextStyle(
                       fontWeight: FontWeight.w900,
                       fontSize: 18,
-                      color: Colors.white
-                  ),
+                      color: Colors.white),
                 ),
-                onPressed: (){
-                    if (input.isEmpty) {
-                      widget.taskList = widget.taskList;
+                onPressed: () {
+                  if (input.isEmpty) {
+                    widget.taskList = widget.taskList;
+                  } else {
+                    var newTodo = new TodosProps(input, "Data", "hora");
+                    if (widget.taskList == null) {
+                      this.widget.taskList = [newTodo].toList();
                     } else {
-                      if (widget.taskList == null) {
-                        widget.taskList = [input];
-                      } else {
-                        widget.taskList.add(input);
-                      }
+                      this.widget.taskList.add(newTodo);
                     }
-                    Navigator.push(context, MaterialPageRoute(
-                        builder: (context) => TaskScreen(taskListUpdated: widget.taskList)
-                    ));
-
+                  }
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              TaskScreen(taskListUpdated: widget.taskList)));
                 },
               ),
             )

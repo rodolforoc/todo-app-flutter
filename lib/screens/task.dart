@@ -2,9 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import './create_task.dart';
 import 'package:toast/toast.dart';
+import 'dart:developer';
 
 class TaskScreen extends StatefulWidget {
-  final List taskListUpdated;
+  final List<TodosProps> taskListUpdated;
 
   TaskScreen({Key key, @required this.taskListUpdated}) : super(key: key);
 
@@ -12,11 +13,19 @@ class TaskScreen extends StatefulWidget {
   _TaskScreenState createState() => _TaskScreenState();
 }
 
+class TodosProps {
+  String title;
+  String date;
+  String hour;
+  TodosProps(this.title, this.date, this.hour);
+}
+
 class _TaskScreenState extends State<TaskScreen> {
   @override
   Widget build(BuildContext context) {
-    List myTodos = List();
     int todosCount = 0;
+
+    List<TodosProps> myTodos = [];
 
     setState(() {
       myTodos = widget.taskListUpdated;
@@ -25,7 +34,71 @@ class _TaskScreenState extends State<TaskScreen> {
       }
     });
 
-    // Toast.show('Test: ' + myTodos.toString(), context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
+    /* var todo1 = new TodosProps("titulo1", "data1", "hora1");
+    var todo2 = new TodosProps("titulo2", "data2", "hora2");
+    var todo3 = new TodosProps("titulo3", "data2", "hora3");
+
+    myTodos.add(todo1);
+    myTodos.add(todo2);
+    myTodos.add(todo3);
+    */
+    Widget slideRightBackground() {
+      return Container(
+        color: Colors.purple[400],
+        child: Align(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(
+                width: 20,
+              ),
+              Icon(
+                Icons.edit,
+                color: Colors.white,
+              ),
+              Text(
+                " Edit",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                ),
+                textAlign: TextAlign.left,
+              ),
+            ],
+          ),
+          alignment: Alignment.centerLeft,
+        ),
+      );
+    }
+
+    Widget slideLeftBackground() {
+      return Container(
+        color: Colors.red,
+        child: Align(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Icon(
+                Icons.delete,
+                color: Colors.white,
+              ),
+              Text(
+                " Delete",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                ),
+                textAlign: TextAlign.right,
+              ),
+              SizedBox(
+                width: 20,
+              ),
+            ],
+          ),
+          alignment: Alignment.centerRight,
+        ),
+      );
+    }
 
     return Scaffold(
       body: Container(
@@ -46,8 +119,7 @@ class _TaskScreenState extends State<TaskScreen> {
                           height: 1.2,
                           letterSpacing: 1,
                           fontWeight: FontWeight.w900,
-                          color: Colors.blueGrey[200]
-                      ),
+                          color: Colors.blueGrey[200]),
                     ),
 
                     ///For spacing
@@ -55,93 +127,154 @@ class _TaskScreenState extends State<TaskScreen> {
                       height: 4,
                     ),
 
-                  ///List of all the task
+                    ///List of all the task
                     Expanded(
                       child: ListView.separated(
-                      itemBuilder: (BuildContext context, index){
-                        ///Change appearance of Completed Task
-                        ///Say index 1 is completed
-                        // .show('Test: ' + myTodos.toString(), context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
-                        return Dismissible(
-                          key: Key(myTodos[index]),
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Colors.blueGrey[100]
-                                ),
-                                color: index == 1 ? Colors.purple[400] : Colors.transparent
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ///Show completed check
-                                ///Task Title
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        myTodos[index],
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 16,
-                                            color: index == 1 ? Colors.white : Colors.grey[800]
+                        itemBuilder: (BuildContext context, index) {
+                          return Dismissible(
+                            key: Key(index.toString()),
+                            background: slideRightBackground(),
+                            secondaryBackground: slideLeftBackground(),
+                            // ignore: missing_return
+                            confirmDismiss: (direction) async {
+                              if (direction == DismissDirection.endToStart) {
+                                final bool res = await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        content: Text(
+                                            "Are you sure you want to delete ${myTodos[index]}?"),
+                                        actions: <Widget>[
+                                          FlatButton(
+                                            child: Text(
+                                              "Cancel",
+                                              style: TextStyle(
+                                                  color: Colors.black),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          FlatButton(
+                                            child: Text(
+                                              "Delete",
+                                              style:
+                                                  TextStyle(color: Colors.red),
+                                            ),
+                                            onPressed: () {
+                                              // TODO: Delete the item from DB etc..
+                                              setState(() {
+                                                myTodos.removeAt(index);
+                                              });
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    });
+                                return res;
+                              } else {
+                                // TODO: Navigate to edit page;
+                              }
+                            },
+                            onDismissed: (direction) {
+                              setState(() {
+                                myTodos.removeAt(index);
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: Colors.blueGrey[100]),
+                                  color: index == 1
+                                      ? Colors.purple[400]
+                                      : Colors.transparent),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ///Show completed check
+                                  ///Task Title
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          myTodos[index].title,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 16,
+                                              color: index == 1
+                                                  ? Colors.white
+                                                  : Colors.grey[800]),
                                         ),
                                       ),
-                                    ),
-                                    ///For Space
-                                    SizedBox(width: 4,),
 
-                                    index == 1 ? Icon(Icons.check_circle, color: Colors.white,) : Container()
-
-                                  ],
-                                ),
-
-                                ///For Space
-                                SizedBox(height: 8,),
-
-                                ///Task Detail
-                                Row(
-                                  children: [
-                                    Text(
-                                      "18 NOV 2019",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 12,
-                                          color: index == 1 ? Colors.white70 : Colors.grey[500]
+                                      ///For Space
+                                      SizedBox(
+                                        width: 4,
                                       ),
-                                    ),
-                                    Spacer(),
-                                    index == 1 ?
-                                    Text(
-                                      "COMPLETED",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w900,
-                                          fontSize: 12,
-                                          color: Colors.white
-                                      ),
-                                    ) :
-                                    Text(
-                                      "11:00 - 3:00",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 12,
-                                          color: index == 1 ? Colors.white70 : Colors.grey[500]
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              ],
 
+                                      index == 1
+                                          ? Icon(
+                                              Icons.check_circle,
+                                              color: Colors.white,
+                                            )
+                                          : Container()
+                                    ],
+                                  ),
+
+                                  ///For Space
+                                  SizedBox(
+                                    height: 8,
+                                  ),
+
+                                  ///Task Detail
+                                  Row(
+                                    children: [
+                                      Text(
+                                        myTodos[index].date,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 12,
+                                            color: index == 1
+                                                ? Colors.white70
+                                                : Colors.grey[500]),
+                                      ),
+                                      Spacer(),
+                                      index == 1
+                                          ? Text(
+                                              "COMPLETED",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w900,
+                                                  fontSize: 12,
+                                                  color: Colors.white),
+                                            )
+                                          : Text(
+                                              myTodos[index].hour,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 12,
+                                                  color: index == 1
+                                                      ? Colors.white70
+                                                      : Colors.grey[500]),
+                                            ),
+                                    ],
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                      separatorBuilder: (BuildContext context, index) => Divider(height: 16, color: Colors.transparent,),
-                      itemCount: todosCount,
+                          );
+                        },
+                        separatorBuilder: (BuildContext context, index) =>
+                            Divider(
+                          height: 16,
+                          color: Colors.transparent,
+                        ),
+                        itemCount: todosCount,
+                      ),
                     ),
-                  ),
 
                     ///For spacing
                     SizedBox(
@@ -153,8 +286,7 @@ class _TaskScreenState extends State<TaskScreen> {
                       width: double.infinity,
                       child: FlatButton(
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)
-                        ),
+                            borderRadius: BorderRadius.circular(10)),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         color: Colors.purple[400],
                         child: Text(
@@ -162,18 +294,18 @@ class _TaskScreenState extends State<TaskScreen> {
                           style: TextStyle(
                               fontSize: 18,
                               color: Colors.white,
-                              fontWeight: FontWeight.w900
-                          ),
+                              fontWeight: FontWeight.w900),
                         ),
-                        onPressed: (){
-                          Navigator.push(context,
-                            MaterialPageRoute(
-                              builder: (context) => CreateTaskScreen(taskList: myTodos,)));
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CreateTaskScreen(
+                                        taskList: myTodos,
+                                      )));
                         },
                       ),
                     )
-
-
                   ],
                 ),
               ),
@@ -181,7 +313,7 @@ class _TaskScreenState extends State<TaskScreen> {
 
             ///Container for task categories
             Container(
-              width: MediaQuery.of(context).size.width*0.22,
+              width: MediaQuery.of(context).size.width * 0.22,
               color: Colors.black,
               height: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 32),
@@ -202,8 +334,7 @@ class _TaskScreenState extends State<TaskScreen> {
                   Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
-                        color: Colors.orangeAccent
-                    ),
+                        color: Colors.orangeAccent),
                     padding: const EdgeInsets.all(16),
                     child: Center(
                       child: Text(
@@ -211,22 +342,22 @@ class _TaskScreenState extends State<TaskScreen> {
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w900,
-                            fontSize: 24
-                        ),
+                            fontSize: 24),
                       ),
                     ),
                   ),
 
                   ///More buttons
                   ///ForSpace
-                  SizedBox(height: 16,),
+                  SizedBox(
+                    height: 16,
+                  ),
 
                   ///Container for cat button
                   Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
-                        color: Colors.grey[800]
-                    ),
+                        color: Colors.grey[800]),
                     padding: const EdgeInsets.all(16),
                     child: Center(
                       child: Text(
@@ -234,22 +365,22 @@ class _TaskScreenState extends State<TaskScreen> {
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w900,
-                            fontSize: 24
-                        ),
+                            fontSize: 24),
                       ),
                     ),
                   ),
 
                   ///More buttons
                   ///ForSpace
-                  SizedBox(height: 16,),
+                  SizedBox(
+                    height: 16,
+                  ),
 
                   ///Container for cat button
                   Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
-                        color: Colors.grey[800]
-                    ),
+                        color: Colors.grey[800]),
                     padding: const EdgeInsets.all(16),
                     child: Center(
                       child: Text(
@@ -257,22 +388,22 @@ class _TaskScreenState extends State<TaskScreen> {
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w900,
-                            fontSize: 24
-                        ),
+                            fontSize: 24),
                       ),
                     ),
                   ),
 
                   ///More buttons
                   ///ForSpace
-                  SizedBox(height: 16,),
+                  SizedBox(
+                    height: 16,
+                  ),
 
                   ///Container for cat button
                   Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
-                        color: Colors.grey[800]
-                    ),
+                        color: Colors.grey[800]),
                     padding: const EdgeInsets.all(16),
                     child: Center(
                       child: Text(
@@ -280,8 +411,7 @@ class _TaskScreenState extends State<TaskScreen> {
                         style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w900,
-                            fontSize: 24
-                        ),
+                            fontSize: 24),
                       ),
                     ),
                   ),
@@ -289,6 +419,7 @@ class _TaskScreenState extends State<TaskScreen> {
                   ///More buttons
                   ///ForSpace
                   Spacer(),
+
                   ///Menu button
                   IconButton(
                     icon: Icon(
