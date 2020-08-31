@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/screens/task.dart';
+import 'package:intl/intl.dart';
 
 class CreateTaskScreen extends StatefulWidget {
   List taskList;
@@ -14,6 +15,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   bool remindMe = true;
   String todoTitle = "";
   DateTime _dateTime;
+  TimeOfDay _time;
+  String _dateTimeString;
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +93,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
           if (todoTitle.isEmpty) {
             widget.taskList = widget.taskList;
           } else {
-            var newTodo = new TodosProps(todoTitle, "Data", "hora");
+            var newTodo = new TodosProps(
+                todoTitle, _dateTimeString, _time.format(context));
             if (widget.taskList == null) {
               this.widget.taskList = [newTodo].toList();
             } else {
@@ -156,6 +160,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                     .then((date) => {
                           setState(() {
                             _dateTime = date;
+                            _dateTimeString =
+                                DateFormat.MMMEd('en_US').format(date);
                           })
                         });
               },
@@ -169,7 +175,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
 
           ///For Text
           Text(
-            _dateTime == null ? 'Choose a Date' : _dateTime.toString(),
+            _dateTime == null ? 'Choose a Date' : _dateTimeString,
             style: TextStyle(
                 fontSize: 18,
                 height: 1.2,
@@ -191,9 +197,20 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                 borderRadius: BorderRadius.circular(15),
                 color: Color.fromRGBO(255, 250, 240, 1)),
             padding: const EdgeInsets.all(16),
-            child: Icon(
-              Icons.alarm,
+            child: IconButton(
+              icon: Icon(Icons.alarm),
               color: Colors.orangeAccent,
+              tooltip: 'Choose a time',
+              onPressed: () {
+                showTimePicker(
+                  context: context,
+                  initialTime: _time == null ? TimeOfDay.now() : _time,
+                ).then((time) => {
+                      setState(() {
+                        _time = time;
+                      })
+                    });
+              },
             ),
           ),
 
@@ -204,7 +221,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
 
           ///For Text
           Text(
-            "1:00 - 3:00 PM",
+            _time == null ? 'Choose a Date' : _time.format(context),
             style: TextStyle(
                 fontSize: 18,
                 height: 1.2,
