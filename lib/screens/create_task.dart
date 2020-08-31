@@ -1,8 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:toast/toast.dart';
 import 'package:todo_app/screens/task.dart';
 
 class CreateTaskScreen extends StatefulWidget {
@@ -15,7 +12,8 @@ class CreateTaskScreen extends StatefulWidget {
 
 class _CreateTaskScreenState extends State<CreateTaskScreen> {
   bool remindMe = true;
-  String input = "";
+  String todoTitle = "";
+  DateTime _dateTime;
 
   @override
   Widget build(BuildContext context) {
@@ -33,268 +31,288 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         backgroundColor: Colors.transparent,
       ),
       body: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          children: [
-            Text(
-              "Create New Task",
-              style: TextStyle(
-                  fontSize: 50,
-                  height: 1.2,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.grey[800]),
-            ),
+          width: double.infinity,
+          padding: const EdgeInsets.all(32),
+          child: createHome(context)),
+    );
+  }
 
-            ///For Spacing
-            Spacer(),
-
-            ///Container for TextField
-            TextField(
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[800],
-              ),
-              onChanged: (String value) {
-                input = value;
-              },
-              decoration: InputDecoration(
-                enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blueGrey[100])),
-                focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blueGrey[100])),
-                hintText: "Task Name",
-                hintStyle: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[400],
-                ),
-              ),
-            ),
-
-            ///For Spacing
-            Spacer(),
-
-            ///Container for timing tray
-            Container(
-              child: Row(
-                children: [
-                  ///Container for Icon
-                  Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Color.fromRGBO(255, 240, 240, 1)),
-                    padding: const EdgeInsets.all(16),
-                    child: Icon(
-                      Icons.calendar_today,
-                      color: Colors.redAccent,
-                    ),
-                  ),
-
-                  ///For spacing
-                  SizedBox(
-                    width: 24,
-                  ),
-
-                  ///For Text
-                  Text(
-                    "Friday 28, November",
-                    style: TextStyle(
-                        fontSize: 18,
-                        height: 1.2,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.grey[700]),
-                  )
-                ],
-              ),
-            ),
-
-            ///For Spacing
-            SizedBox(
-              height: 16,
-            ),
-
-            ///Container for timing tray 2
-            Container(
-              child: Row(
-                children: [
-                  ///Container for Icon
-                  Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Color.fromRGBO(255, 250, 240, 1)),
-                    padding: const EdgeInsets.all(16),
-                    child: Icon(
-                      Icons.alarm,
-                      color: Colors.orangeAccent,
-                    ),
-                  ),
-
-                  ///For spacing
-                  SizedBox(
-                    width: 24,
-                  ),
-
-                  ///For Text
-                  Text(
-                    "1:00 - 3:00 PM",
-                    style: TextStyle(
-                        fontSize: 18,
-                        height: 1.2,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.grey[700]),
-                  )
-                ],
-              ),
-            ),
-
-            ///For Spacing
-            Spacer(),
-
-            ///Container for Task Category
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.blueGrey[100],
-                ),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                children: [
-                  ///Container for Icon
-                  Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Color.fromRGBO(255, 250, 240, 1)),
-                    padding: const EdgeInsets.all(16),
-                    child: Icon(
-                      Icons.web_asset,
-                      color: Colors.orangeAccent,
-                    ),
-                  ),
-
-                  ///For spacing
-                  SizedBox(
-                    width: 24,
-                  ),
-
-                  ///For Text
-                  Text(
-                    "Work",
-                    style: TextStyle(
-                        fontSize: 18,
-                        height: 1.2,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.grey[700]),
-                  ),
-
-                  Spacer(),
-                  IconButton(
-                    icon: Icon(Icons.arrow_forward_ios),
-                    onPressed: () {},
-                  )
-                ],
-              ),
-            ),
-
-            ///For Spacing
-            SizedBox(
-              height: 16,
-            ),
-
-            ///Container for remind
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.blueGrey[100],
-                ),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                children: [
-                  ///Container for Icon
-                  Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        color: Color.fromRGBO(240, 235, 255, 1)),
-                    padding: const EdgeInsets.all(16),
-                    child: Icon(
-                      Icons.alarm_on,
-                      color: Colors.purpleAccent[100],
-                    ),
-                  ),
-
-                  ///For spacing
-                  SizedBox(
-                    width: 24,
-                  ),
-
-                  ///For Text
-                  Text(
-                    "Remind me",
-                    style: TextStyle(
-                        fontSize: 18,
-                        height: 1.2,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.grey[700]),
-                  ),
-
-                  Spacer(),
-                  Switch(
-                    onChanged: (value) {
-                      setState(() {
-                        remindMe = value;
-                      });
-                    },
-                    value: remindMe,
-                    activeColor: Colors.lightBlueAccent,
-                  )
-                ],
-              ),
-            ),
-
-            Spacer(),
-
-            ///Button for Create Task
-            Container(
-              width: double.infinity,
-              child: FlatButton(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                color: Colors.black,
-                child: Text(
-                  "CREATE TASK",
-                  style: TextStyle(
-                      fontWeight: FontWeight.w900,
-                      fontSize: 18,
-                      color: Colors.white),
-                ),
-                onPressed: () {
-                  if (input.isEmpty) {
-                    widget.taskList = widget.taskList;
-                  } else {
-                    var newTodo = new TodosProps(input, "Data", "hora");
-                    if (widget.taskList == null) {
-                      this.widget.taskList = [newTodo].toList();
-                    } else {
-                      this.widget.taskList.add(newTodo);
-                    }
-                  }
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              TaskScreen(taskListUpdated: widget.taskList)));
-                },
-              ),
-            )
-          ],
+  createHome(BuildContext context) {
+    return Column(
+      children: [
+        title(context),
+        Spacer(),
+        todoInputField(context),
+        Spacer(),
+        todoDateField(context),
+        SizedBox(
+          height: 16,
         ),
+        todoAlarmField(context),
+        Spacer(),
+        todoCategoryField(context),
+        SizedBox(
+          height: 16,
+        ),
+        todoRemindField(context),
+        Spacer(),
+        newTaskButton(context)
+      ],
+    );
+  }
+
+  title(BuildContext context) {
+    return Text(
+      "Create New Task",
+      style: TextStyle(
+          fontSize: 50,
+          height: 1.2,
+          fontWeight: FontWeight.w700,
+          color: Colors.grey[800]),
+    );
+  }
+
+  newTaskButton(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      child: FlatButton(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        color: Colors.black,
+        child: Text(
+          "CREATE TASK",
+          style: TextStyle(
+              fontWeight: FontWeight.w900, fontSize: 18, color: Colors.white),
+        ),
+        onPressed: () {
+          if (todoTitle.isEmpty) {
+            widget.taskList = widget.taskList;
+          } else {
+            var newTodo = new TodosProps(todoTitle, "Data", "hora");
+            if (widget.taskList == null) {
+              this.widget.taskList = [newTodo].toList();
+            } else {
+              this.widget.taskList.add(newTodo);
+            }
+          }
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      TaskScreen(taskListUpdated: widget.taskList)));
+        },
+      ),
+    );
+  }
+
+  todoInputField(BuildContext context) {
+    return TextField(
+      style: TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.w500,
+        color: Colors.grey[800],
+      ),
+      onChanged: (String value) {
+        todoTitle = value;
+      },
+      decoration: InputDecoration(
+        enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.blueGrey[100])),
+        focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.blueGrey[100])),
+        hintText: "Task Name",
+        hintStyle: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.w500,
+          color: Colors.grey[400],
+        ),
+      ),
+    );
+  }
+
+  todoDateField(BuildContext context) {
+    return Container(
+      child: Row(
+        children: [
+          ///Container for Icon
+          Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: Color.fromRGBO(255, 240, 240, 1)),
+            padding: const EdgeInsets.all(16),
+            child: IconButton(
+              icon: Icon(Icons.calendar_today),
+              color: Colors.redAccent,
+              tooltip: 'Choose a Date',
+              onPressed: () {
+                showDatePicker(
+                        context: context,
+                        initialDate:
+                            _dateTime == null ? DateTime.now() : _dateTime,
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime(2220))
+                    .then((date) => {
+                          setState(() {
+                            _dateTime = date;
+                          })
+                        });
+              },
+            ),
+          ),
+
+          ///For spacing
+          SizedBox(
+            width: 24,
+          ),
+
+          ///For Text
+          Text(
+            _dateTime == null ? 'Choose a Date' : _dateTime.toString(),
+            style: TextStyle(
+                fontSize: 18,
+                height: 1.2,
+                fontWeight: FontWeight.w700,
+                color: Colors.grey[700]),
+          )
+        ],
+      ),
+    );
+  }
+
+  todoAlarmField(BuildContext context) {
+    return Container(
+      child: Row(
+        children: [
+          ///Container for Icon
+          Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: Color.fromRGBO(255, 250, 240, 1)),
+            padding: const EdgeInsets.all(16),
+            child: Icon(
+              Icons.alarm,
+              color: Colors.orangeAccent,
+            ),
+          ),
+
+          ///For spacing
+          SizedBox(
+            width: 24,
+          ),
+
+          ///For Text
+          Text(
+            "1:00 - 3:00 PM",
+            style: TextStyle(
+                fontSize: 18,
+                height: 1.2,
+                fontWeight: FontWeight.w700,
+                color: Colors.grey[700]),
+          )
+        ],
+      ),
+    );
+  }
+
+  todoCategoryField(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.blueGrey[100],
+        ),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          ///Container for Icon
+          Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: Color.fromRGBO(255, 250, 240, 1)),
+            padding: const EdgeInsets.all(16),
+            child: Icon(
+              Icons.web_asset,
+              color: Colors.orangeAccent,
+            ),
+          ),
+
+          ///For spacing
+          SizedBox(
+            width: 24,
+          ),
+
+          ///For Text
+          Text(
+            "Work",
+            style: TextStyle(
+                fontSize: 18,
+                height: 1.2,
+                fontWeight: FontWeight.w700,
+                color: Colors.grey[700]),
+          ),
+
+          Spacer(),
+          IconButton(
+            icon: Icon(Icons.arrow_forward_ios),
+            onPressed: () {},
+          )
+        ],
+      ),
+    );
+  }
+
+  todoRemindField(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.blueGrey[100],
+        ),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          ///Container for Icon
+          Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: Color.fromRGBO(240, 235, 255, 1)),
+            padding: const EdgeInsets.all(16),
+            child: Icon(
+              Icons.alarm_on,
+              color: Colors.purpleAccent[100],
+            ),
+          ),
+
+          ///For spacing
+          SizedBox(
+            width: 24,
+          ),
+
+          ///For Text
+          Text(
+            "Remind me",
+            style: TextStyle(
+                fontSize: 18,
+                height: 1.2,
+                fontWeight: FontWeight.w700,
+                color: Colors.grey[700]),
+          ),
+
+          Spacer(),
+          Switch(
+            onChanged: (value) {
+              setState(() {
+                remindMe = value;
+              });
+            },
+            value: remindMe,
+            activeColor: Colors.lightBlueAccent,
+          )
+        ],
       ),
     );
   }
