@@ -145,7 +145,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
                 color: Color.fromRGBO(255, 240, 240, 1)),
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(8),
             child: IconButton(
               icon: Icon(Icons.calendar_today),
               color: Colors.redAccent,
@@ -196,7 +196,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
                 color: Color.fromRGBO(255, 250, 240, 1)),
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(8),
             child: IconButton(
               icon: Icon(Icons.alarm),
               color: Colors.orangeAccent,
@@ -221,7 +221,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
 
           ///For Text
           Text(
-            _time == null ? 'Choose a Times' : _time.format(context),
+            _time == null ? 'Choose a Time' : _time.format(context),
             style: TextStyle(
                 fontSize: 18,
                 height: 1.2,
