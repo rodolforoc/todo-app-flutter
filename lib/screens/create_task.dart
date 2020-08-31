@@ -221,7 +221,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
 
           ///For Text
           Text(
-            _time == null ? 'Choose a Date' : _time.format(context),
+            _time == null ? 'Choose a Times' : _time.format(context),
             style: TextStyle(
                 fontSize: 18,
                 height: 1.2,
