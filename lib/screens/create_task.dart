@@ -1,12 +1,12 @@
+import 'dart:collection';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app/screens/task.dart';
 import 'package:intl/intl.dart';
 
 class CreateTaskScreen extends StatefulWidget {
-  List taskList;
-
-  CreateTaskScreen({Key key, @required this.taskList}) : super(key: key);
   @override
   _CreateTaskScreenState createState() => _CreateTaskScreenState();
 }
@@ -75,6 +75,20 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     );
   }
 
+  createTodos() {
+    Map<String, dynamic> todoData = {
+      "title": todoTitle,
+      "date": _dateTimeString,
+      "hour": _time.format(context)
+    };
+
+    DocumentReference documentReference =
+        Firestore.instance.collection("mytodos").document(todoTitle);
+    documentReference.setData(todoData);
+
+    //collectionReference.document(todoTitle).setData(todoData);
+  }
+
   newTaskButton(BuildContext context) {
     return Container(
       width: double.infinity,
@@ -90,22 +104,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
               fontWeight: FontWeight.w900, fontSize: 18, color: Colors.white),
         ),
         onPressed: () {
-          if (todoTitle.isEmpty) {
-            widget.taskList = widget.taskList;
-          } else {
-            var newTodo = new TodosProps(
-                todoTitle, _dateTimeString, _time.format(context));
-            if (widget.taskList == null) {
-              this.widget.taskList = [newTodo].toList();
-            } else {
-              this.widget.taskList.add(newTodo);
-            }
-          }
+          createTodos();
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      TaskScreen(taskListUpdated: widget.taskList)));
+              context, MaterialPageRoute(builder: (context) => TaskScreen()));
         },
       ),
     );

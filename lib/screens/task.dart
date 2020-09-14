@@ -4,10 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import './create_task.dart';
 
 class TaskScreen extends StatefulWidget {
-  final List<TodosProps> taskListUpdated;
-
-  TaskScreen({Key key, @required this.taskListUpdated}) : super(key: key);
-
   @override
   _TaskScreenState createState() => _TaskScreenState();
 }
@@ -20,19 +16,8 @@ class TodosProps {
 }
 
 class _TaskScreenState extends State<TaskScreen> {
-  int todosCount = 0;
-
-  List<TodosProps> myTodos = [];
-
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      myTodos = widget.taskListUpdated;
-      if (myTodos != null) {
-        todosCount = myTodos.length;
-      }
-    });
-
     return Scaffold(
       body: home(context),
     );
@@ -70,132 +55,123 @@ class _TaskScreenState extends State<TaskScreen> {
   Widget _todoListItem(BuildContext context, DocumentSnapshot data) {
     final record = TodoRecord.fromSnapshot(data);
 
-    return Dismissible(
-      key: ValueKey(record.title),
-      background: slideRightBackground(),
-      secondaryBackground: slideLeftBackground(),
-      // ignore: missing_return
-      confirmDismiss: (direction) async {
-        if (direction == DismissDirection.endToStart) {
-          final bool res = await showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  content:
-                      Text("Are you sure you want to delete ${record.title}?"),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text(
-                        "Cancel",
-                        style: TextStyle(color: Colors.black),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6.0),
+      child: Dismissible(
+        key: ValueKey(record.title),
+        background: slideRightBackground(),
+        secondaryBackground: slideLeftBackground(),
+        // ignore: missing_return
+        confirmDismiss: (direction) async {
+          if (direction == DismissDirection.endToStart) {
+            final bool res = await showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    content: Text(
+                        "Are you sure you want to delete ${record.title}?"),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
                       ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    FlatButton(
-                      child: Text(
-                        "Delete",
-                        style: TextStyle(color: Colors.red),
+                      FlatButton(
+                        child: Text(
+                          "Delete",
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        onPressed: () {
+                          deleteTodos(data["title"]);
+                          Navigator.of(context).pop();
+                        },
                       ),
-                      onPressed: () {
-                        // TODO: Delete the item from DB etc..
-                        /*setState(() {
-                          myTodos.removeAt(index);
-                        });
-                        */
-                        Navigator.of(context).pop();
-                      },
+                    ],
+                  );
+                });
+            return res;
+          } else {
+            // TODO: Navigate to edit page;
+          }
+        },
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.blueGrey[100]),
+              color: Colors.transparent),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      record.title,
+                      style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                          color: Colors.grey[800]),
                     ),
-                  ],
-                );
-              });
-          return res;
-        } else {
-          // TODO: Navigate to edit page;
-        }
-      },
-      onDismissed: (direction) {
-        /*setState(() {
-          myTodos.removeAt(index);
-        });
-        */
-      },
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-            border: Border.all(color: Colors.blueGrey[100]),
-            color: Colors.transparent),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ///Show completed check
-            ///Task Title
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Text(
-                    record.title,
+                  ),
+                  SizedBox(
+                    width: 4,
+                  ),
+
+                  /*index == 1
+                      ? Icon(
+                          Icons.check_circle,
+                          color: Colors.white,
+                        )
+                      : Container()*/
+                ],
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              Row(
+                children: [
+                  Text(
+                    record.date,
                     style: TextStyle(
                         fontWeight: FontWeight.w500,
-                        fontSize: 16,
-                        color: Colors.grey[800]),
+                        fontSize: 12,
+                        color: Colors.grey[500]),
                   ),
-                ),
-
-                ///For Space
-                SizedBox(
-                  width: 4,
-                ),
-
-                /*index == 1
-                    ? Icon(
-                        Icons.check_circle,
-                        color: Colors.white,
-                      )
-                    : Container()*/
-              ],
-            ),
-
-            ///For Space
-            SizedBox(
-              height: 8,
-            ),
-
-            ///Task Detail
-            Row(
-              children: [
-                Text(
-                  record.date,
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: Colors.grey[500]),
-                ),
-                Spacer(),
-                /*index == 1
-                    ? Text(
-                        "COMPLETED",
-                        style: TextStyle(
-                            fontWeight: FontWeight.w900,
-                            fontSize: 12,
-                            color: Colors.white),
-                      )
-                    : */
-                Text(
-                  record.hour,
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12,
-                      color: Colors.grey[500]),
-                ),
-              ],
-            )
-          ],
+                  Spacer(),
+                  /*index == 1
+                      ? Text(
+                          "COMPLETED",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w900,
+                              fontSize: 12,
+                              color: Colors.white),
+                        )
+                      : */
+                  Text(
+                    record.hour,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                        color: Colors.grey[500]),
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  deleteTodos(item) {
+    DocumentReference documentReference =
+        Firestore.instance.collection("mytodos").document(item);
+    documentReference.delete();
   }
 
   taskList(BuildContext context) {
@@ -231,12 +207,8 @@ class _TaskScreenState extends State<TaskScreen> {
               fontSize: 18, color: Colors.white, fontWeight: FontWeight.w900),
         ),
         onPressed: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => CreateTaskScreen(
-                        taskList: myTodos,
-                      )));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => CreateTaskScreen()));
         },
       ),
     );
