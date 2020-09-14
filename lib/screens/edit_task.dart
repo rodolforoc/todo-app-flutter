@@ -6,20 +6,32 @@ import 'package:flutter/material.dart';
 import 'package:todo_app/screens/task.dart';
 import 'package:intl/intl.dart';
 
-class CreateTaskScreen extends StatefulWidget {
+class EditTaskScreen extends StatefulWidget {
+  DocumentSnapshot todo;
+
+  EditTaskScreen({Key key, @required this.todo}) : super(key: key);
   @override
-  _CreateTaskScreenState createState() => _CreateTaskScreenState();
+  _EditTaskScreenState createState() => _EditTaskScreenState();
 }
 
-class _CreateTaskScreenState extends State<CreateTaskScreen> {
+class _EditTaskScreenState extends State<EditTaskScreen> {
   bool remindMe = true;
   String todoTitle = "";
   DateTime _dateTime;
+  DateTime date;
+  Timestamp t;
   TimeOfDay _time;
+  String time;
   String _dateTimeString;
+  var txt = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      txt.text = widget.todo["title"].toString();
+      t = widget.todo["date"];
+      date = t.toDate();
+    });
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -36,11 +48,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
       body: Container(
           width: double.infinity,
           padding: const EdgeInsets.all(32),
-          child: createHome(context)),
+          child: editHome(context)),
     );
   }
 
-  createHome(BuildContext context) {
+  editHome(BuildContext context) {
     return Column(
       children: [
         title(context),
@@ -59,14 +71,14 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         ),
         todoRemindField(context),
         Spacer(),
-        newTaskButton(context)
+        saveTaskButton(context)
       ],
     );
   }
 
   title(BuildContext context) {
     return Text(
-      "Create New Task",
+      "Edit Task",
       style: TextStyle(
           fontSize: 50,
           height: 1.2,
@@ -75,11 +87,10 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     );
   }
 
-  createTodos() {
-    print(_dateTime.toString());
+  editTodos() {
     Map<String, dynamic> todoData = {
       "title": todoTitle,
-      "date": _dateTime,
+      "date": _dateTimeString,
       "hour": _time.format(context)
     };
 
@@ -90,7 +101,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     //collectionReference.document(todoTitle).setData(todoData);
   }
 
-  newTaskButton(BuildContext context) {
+  saveTaskButton(BuildContext context) {
     return Container(
       width: double.infinity,
       child: FlatButton(
@@ -105,7 +116,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
               fontWeight: FontWeight.w900, fontSize: 18, color: Colors.white),
         ),
         onPressed: () {
-          createTodos();
+          editTodos();
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => TaskScreen()));
         },
@@ -115,6 +126,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
 
   todoInputField(BuildContext context) {
     return TextField(
+      controller: txt,
       style: TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.w500,
@@ -128,7 +140,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
             borderSide: BorderSide(color: Colors.blueGrey[100])),
         focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.blueGrey[100])),
-        hintText: "Task Name",
         hintStyle: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.w500,
@@ -155,8 +166,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
               onPressed: () {
                 showDatePicker(
                         context: context,
-                        initialDate:
-                            _dateTime == null ? DateTime.now() : _dateTime,
+                        initialDate: _dateTime == null ? date : _dateTime,
                         firstDate: DateTime(2020),
                         lastDate: DateTime(2220))
                     .then((date) => {
@@ -177,7 +187,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
 
           ///For Text
           Text(
-            _dateTime == null ? 'Choose a Date' : _dateTimeString,
+            _dateTime == null
+                ? DateFormat.MMMEd('en_US').format(date).toString()
+                : _dateTimeString,
             style: TextStyle(
                 fontSize: 18,
                 height: 1.2,
@@ -190,6 +202,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   }
 
   todoAlarmField(BuildContext context) {
+    TimeOfDay stringToTimeOfDay(String tod) {
+      final format = DateFormat.jm(); //"6:00 AM"
+      return TimeOfDay.fromDateTime(format.parse(tod));
+    }
+
     return Container(
       child: Row(
         children: [
@@ -206,7 +223,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
               onPressed: () {
                 showTimePicker(
                   context: context,
-                  initialTime: _time == null ? TimeOfDay.now() : _time,
+                  initialTime: stringToTimeOfDay(widget.todo["hour"]),
                 ).then((time) => {
                       setState(() {
                         _time = time;
@@ -223,7 +240,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
 
           ///For Text
           Text(
-            _time == null ? 'Choose a Time' : _time.format(context),
+            _time == null
+                ? stringToTimeOfDay(widget.todo["hour"]).format(context)
+                : _time.format(context),
             style: TextStyle(
                 fontSize: 18,
                 height: 1.2,

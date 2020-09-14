@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
+import 'package:todo_app/screens/edit_task.dart';
 import './create_task.dart';
 
 class TaskScreen extends StatefulWidget {
@@ -10,8 +12,8 @@ class TaskScreen extends StatefulWidget {
 
 class TodosProps {
   String title;
-  String date;
-  String hour;
+  Timestamp date;
+  TimeOfDay hour;
   TodosProps(this.title, this.date, this.hour);
 }
 
@@ -95,7 +97,12 @@ class _TaskScreenState extends State<TaskScreen> {
                 });
             return res;
           } else {
-            // TODO: Navigate to edit page;
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => EditTaskScreen(
+                          todo: data,
+                        )));
           }
         },
         child: Container(
@@ -136,7 +143,9 @@ class _TaskScreenState extends State<TaskScreen> {
               Row(
                 children: [
                   Text(
-                    record.date,
+                    DateFormat.MMMEd('en_US')
+                        .format(record.date.toDate())
+                        .toString(),
                     style: TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 12,
@@ -350,7 +359,7 @@ class _TaskScreenState extends State<TaskScreen> {
 
 class TodoRecord {
   final String title;
-  final String date;
+  final Timestamp date;
   final String hour;
   final DocumentReference reference;
 
