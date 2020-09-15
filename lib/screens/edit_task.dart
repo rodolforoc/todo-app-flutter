@@ -16,10 +16,9 @@ class EditTaskScreen extends StatefulWidget {
 
 class _EditTaskScreenState extends State<EditTaskScreen> {
   bool remindMe = true;
-  String todoTitle = "";
+  String todoTitle;
   DateTime _dateTime;
   DateTime date;
-  Timestamp t;
   TimeOfDay _time;
   String time;
   String _dateTimeString;
@@ -29,8 +28,9 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
   Widget build(BuildContext context) {
     setState(() {
       txt.text = widget.todo["title"].toString();
-      t = widget.todo["date"];
-      date = t.toDate();
+      todoTitle = widget.todo["title"].toString();
+      date = widget.todo["date"].toDate();
+      time = widget.todo["hour"];
     });
     return Scaffold(
       appBar: AppBar(
@@ -88,17 +88,15 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
   }
 
   editTodos() {
-    Map<String, dynamic> todoData = {
+    DocumentReference documentReference = Firestore.instance
+        .collection("mytodos")
+        .document(widget.todo.documentID);
+
+    documentReference.updateData({
       "title": todoTitle,
-      "date": _dateTimeString,
+      "date": _dateTime == null ? date : _dateTime,
       "hour": _time.format(context)
-    };
-
-    DocumentReference documentReference =
-        Firestore.instance.collection("mytodos").document(todoTitle);
-    documentReference.setData(todoData);
-
-    //collectionReference.document(todoTitle).setData(todoData);
+    });
   }
 
   saveTaskButton(BuildContext context) {
@@ -111,7 +109,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
         padding: const EdgeInsets.symmetric(vertical: 16),
         color: Colors.black,
         child: Text(
-          "CREATE TASK",
+          "SAVE",
           style: TextStyle(
               fontWeight: FontWeight.w900, fontSize: 18, color: Colors.white),
         ),
@@ -223,7 +221,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
               onPressed: () {
                 showTimePicker(
                   context: context,
-                  initialTime: stringToTimeOfDay(widget.todo["hour"]),
+                  initialTime: _time == null ? stringToTimeOfDay(time) : _time,
                 ).then((time) => {
                       setState(() {
                         _time = time;

@@ -76,7 +76,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   }
 
   createTodos() {
-    print(_dateTime.toString());
     Map<String, dynamic> todoData = {
       "title": todoTitle,
       "date": _dateTime,
@@ -84,7 +83,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     };
 
     DocumentReference documentReference =
-        Firestore.instance.collection("mytodos").document(todoTitle);
+        Firestore.instance.collection("mytodos").document();
     documentReference.setData(todoData);
 
     //collectionReference.document(todoTitle).setData(todoData);

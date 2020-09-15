@@ -88,7 +88,7 @@ class _TaskScreenState extends State<TaskScreen> {
                           style: TextStyle(color: Colors.red),
                         ),
                         onPressed: () {
-                          deleteTodos(data["title"]);
+                          deleteTodos(data.documentID);
                           Navigator.of(context).pop();
                         },
                       ),
