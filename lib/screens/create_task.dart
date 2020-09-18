@@ -12,11 +12,14 @@ class CreateTaskScreen extends StatefulWidget {
 }
 
 class _CreateTaskScreenState extends State<CreateTaskScreen> {
+  final _formKey = GlobalKey<FormState>();
   bool remindMe = true;
   String todoTitle = "";
   DateTime _dateTime;
   TimeOfDay _time;
   String _dateTimeString;
+  var txtDate = TextEditingController();
+  var txtTime = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -41,26 +44,29 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   }
 
   createHome(BuildContext context) {
-    return Column(
-      children: [
-        title(context),
-        Spacer(),
-        todoInputField(context),
-        Spacer(),
-        todoDateField(context),
-        SizedBox(
-          height: 16,
-        ),
-        todoAlarmField(context),
-        Spacer(),
-        todoCategoryField(context),
-        SizedBox(
-          height: 16,
-        ),
-        todoRemindField(context),
-        Spacer(),
-        newTaskButton(context)
-      ],
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          title(context),
+          Spacer(),
+          todoInputField(context),
+          Spacer(),
+          todoDateField(context),
+          SizedBox(
+            height: 16,
+          ),
+          todoAlarmField(context),
+          Spacer(),
+          todoCategoryField(context),
+          SizedBox(
+            height: 16,
+          ),
+          todoRemindField(context),
+          Spacer(),
+          newTaskButton(context)
+        ],
+      ),
     );
   }
 
@@ -104,16 +110,18 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
               fontWeight: FontWeight.w900, fontSize: 18, color: Colors.white),
         ),
         onPressed: () {
-          createTodos();
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => TaskScreen()));
+          if (_formKey.currentState.validate()) {
+            createTodos();
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => TaskScreen()));
+          }
         },
       ),
     );
   }
 
   todoInputField(BuildContext context) {
-    return TextField(
+    return TextFormField(
       style: TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.w500,
@@ -134,10 +142,17 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
           color: Colors.grey[400],
         ),
       ),
+      validator: (value) {
+        if (value.isEmpty) {
+          return 'Please enter some text';
+        }
+        return null;
+      },
     );
   }
 
   todoDateField(BuildContext context) {
+    txtDate.text = _dateTime == null ? 'Choose a Date' : _dateTimeString;
     return Container(
       child: Row(
         children: [
@@ -156,7 +171,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                         context: context,
                         initialDate:
                             _dateTime == null ? DateTime.now() : _dateTime,
-                        firstDate: DateTime(2020),
+                        firstDate: DateTime.now(),
                         lastDate: DateTime(2220))
                     .then((date) => {
                           setState(() {
@@ -175,13 +190,25 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
           ),
 
           ///For Text
-          Text(
-            _dateTime == null ? 'Choose a Date' : _dateTimeString,
-            style: TextStyle(
-                fontSize: 18,
-                height: 1.2,
-                fontWeight: FontWeight.w700,
-                color: Colors.grey[700]),
+          Expanded(
+            child: SizedBox(
+              height: 50,
+              child: TextFormField(
+                controller: txtDate,
+                decoration: InputDecoration(border: InputBorder.none),
+                style: TextStyle(
+                    fontSize: 18,
+                    height: 1.2,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.grey[700]),
+                validator: (value) {
+                  if (value == 'Choose a Date') {
+                    return 'Please choose a Date';
+                  }
+                  return null;
+                },
+              ),
+            ),
           )
         ],
       ),
@@ -189,6 +216,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   }
 
   todoAlarmField(BuildContext context) {
+    txtTime.text = _time == null ? 'Choose a Time' : _time.format(context);
     return Container(
       child: Row(
         children: [
@@ -221,13 +249,25 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
           ),
 
           ///For Text
-          Text(
-            _time == null ? 'Choose a Time' : _time.format(context),
-            style: TextStyle(
-                fontSize: 18,
-                height: 1.2,
-                fontWeight: FontWeight.w700,
-                color: Colors.grey[700]),
+          Expanded(
+            child: SizedBox(
+              height: 50,
+              child: TextFormField(
+                controller: txtTime,
+                decoration: InputDecoration(border: InputBorder.none),
+                style: TextStyle(
+                    fontSize: 18,
+                    height: 1.2,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.grey[700]),
+                validator: (value) {
+                  if (value == 'Choose a Time') {
+                    return 'Please choose a Time';
+                  }
+                  return null;
+                },
+              ),
+            ),
           )
         ],
       ),
