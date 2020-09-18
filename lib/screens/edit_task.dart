@@ -15,6 +15,7 @@ class EditTaskScreen extends StatefulWidget {
 }
 
 class _EditTaskScreenState extends State<EditTaskScreen> {
+  final _formKey = GlobalKey<FormState>();
   bool remindMe = true;
   String todoTitle;
   DateTime _dateTime;
@@ -30,6 +31,8 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
       txt.text = widget.todo["title"].toString();
       todoTitle = widget.todo["title"].toString();
       date = widget.todo["date"].toDate();
+      // ignore: unnecessary_statements
+      _dateTime == null ? date : _dateTime;
       time = widget.todo["hour"];
     });
     return Scaffold(
@@ -53,26 +56,29 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
   }
 
   editHome(BuildContext context) {
-    return Column(
-      children: [
-        title(context),
-        Spacer(),
-        todoInputField(context),
-        Spacer(),
-        todoDateField(context),
-        SizedBox(
-          height: 16,
-        ),
-        todoAlarmField(context),
-        Spacer(),
-        todoCategoryField(context),
-        SizedBox(
-          height: 16,
-        ),
-        todoRemindField(context),
-        Spacer(),
-        saveTaskButton(context)
-      ],
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          title(context),
+          Spacer(),
+          todoInputField(context),
+          Spacer(),
+          todoDateField(context),
+          SizedBox(
+            height: 16,
+          ),
+          todoAlarmField(context),
+          Spacer(),
+          todoCategoryField(context),
+          SizedBox(
+            height: 16,
+          ),
+          todoRemindField(context),
+          Spacer(),
+          saveTaskButton(context)
+        ],
+      ),
     );
   }
 
@@ -95,7 +101,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
     documentReference.updateData({
       "title": todoTitle,
       "date": _dateTime == null ? date : _dateTime,
-      "hour": _time.format(context)
+      "hour": time
     });
   }
 
@@ -114,16 +120,18 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
               fontWeight: FontWeight.w900, fontSize: 18, color: Colors.white),
         ),
         onPressed: () {
-          editTodos();
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => TaskScreen()));
+          if (_formKey.currentState.validate()) {
+            editTodos();
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => TaskScreen()));
+          }
         },
       ),
     );
   }
 
   todoInputField(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: txt,
       style: TextStyle(
         fontSize: 24,
@@ -144,6 +152,12 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
           color: Colors.grey[400],
         ),
       ),
+      validator: (value) {
+        if (value.isEmpty) {
+          return 'Please enter some text';
+        }
+        return null;
+      },
     );
   }
 
