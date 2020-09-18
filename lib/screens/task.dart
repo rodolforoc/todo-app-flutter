@@ -14,7 +14,8 @@ class TodosProps {
   String title;
   Timestamp date;
   TimeOfDay hour;
-  TodosProps(this.title, this.date, this.hour);
+  bool completed;
+  TodosProps(this.title, this.date, this.hour, this.completed);
 }
 
 class _TaskScreenState extends State<TaskScreen> {
@@ -59,118 +60,121 @@ class _TaskScreenState extends State<TaskScreen> {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 6.0),
-      child: Dismissible(
-        key: ValueKey(record.title),
-        background: slideRightBackground(),
-        secondaryBackground: slideLeftBackground(),
-        // ignore: missing_return
-        confirmDismiss: (direction) async {
-          if (direction == DismissDirection.endToStart) {
-            final bool res = await showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    content: Text(
-                        "Are you sure you want to delete ${record.title}?"),
-                    actions: <Widget>[
-                      FlatButton(
-                        child: Text(
-                          "Cancel",
-                          style: TextStyle(color: Colors.black),
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      FlatButton(
-                        child: Text(
-                          "Delete",
-                          style: TextStyle(color: Colors.red),
-                        ),
-                        onPressed: () {
-                          deleteTodos(data.documentID);
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  );
-                });
-            return res;
-          } else {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => EditTaskScreen(
-                          todo: data,
-                        )));
-          }
+      child: GestureDetector(
+        onDoubleTap: () {
+          completeTodos(data);
         },
-        child: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.blueGrey[100]),
-              color: Colors.transparent),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Text(
-                      record.title,
+        child: Dismissible(
+          key: ValueKey(record.title),
+          background: slideRightBackground(),
+          secondaryBackground: slideLeftBackground(),
+          // ignore: missing_return
+          confirmDismiss: (direction) async {
+            if (direction == DismissDirection.endToStart) {
+              final bool res = await showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      content: Text(
+                          "Are you sure you want to delete ${record.title}?"),
+                      actions: <Widget>[
+                        FlatButton(
+                          child: Text(
+                            "Cancel",
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        FlatButton(
+                          child: Text(
+                            "Delete",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                          onPressed: () {
+                            deleteTodos(data.documentID);
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  });
+              return res;
+            } else {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => EditTaskScreen(
+                            todo: data,
+                          )));
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.blueGrey[100]),
+                color: Colors.transparent),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        record.title,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16,
+                            color: Colors.grey[800]),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    record.completed == true
+                        ? Icon(
+                            Icons.check_circle,
+                            color: Colors.purple,
+                          )
+                        : Container()
+                  ],
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Row(
+                  children: [
+                    Text(
+                      DateFormat.MMMEd('en_US')
+                          .format(record.date.toDate())
+                          .toString(),
                       style: TextStyle(
                           fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                          color: Colors.grey[800]),
+                          fontSize: 12,
+                          color: Colors.grey[500]),
                     ),
-                  ),
-                  SizedBox(
-                    width: 4,
-                  ),
-
-                  /*index == 1
-                      ? Icon(
-                          Icons.check_circle,
-                          color: Colors.white,
-                        )
-                      : Container()*/
-                ],
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              Row(
-                children: [
-                  Text(
-                    DateFormat.MMMEd('en_US')
-                        .format(record.date.toDate())
-                        .toString(),
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12,
-                        color: Colors.grey[500]),
-                  ),
-                  Spacer(),
-                  /*index == 1
-                      ? Text(
-                          "COMPLETED",
-                          style: TextStyle(
-                              fontWeight: FontWeight.w900,
-                              fontSize: 12,
-                              color: Colors.white),
-                        )
-                      : */
-                  Text(
-                    record.hour,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12,
-                        color: Colors.grey[500]),
-                  ),
-                ],
-              )
-            ],
+                    Spacer(),
+                    record.completed == true
+                        ? Text(
+                            "COMPLETED",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                fontSize: 12,
+                                color: Colors.purple),
+                          )
+                        : Text(
+                            record.hour,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                                color: Colors.grey[500]),
+                          ),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -181,6 +185,16 @@ class _TaskScreenState extends State<TaskScreen> {
     DocumentReference documentReference =
         Firestore.instance.collection("mytodos").document(item);
     documentReference.delete();
+  }
+
+  completeTodos(item) {
+    DocumentReference documentReference =
+        Firestore.instance.collection("mytodos").document(item.documentID);
+    bool taskStatus = !item["completed"];
+
+    documentReference.updateData({
+      "completed": taskStatus,
+    });
   }
 
   taskList(BuildContext context) {
@@ -361,15 +375,18 @@ class TodoRecord {
   final String title;
   final Timestamp date;
   final String hour;
+  final bool completed;
   final DocumentReference reference;
 
   TodoRecord.fromMap(Map<String, dynamic> map, {this.reference})
       : assert(map['title'] != null),
         assert(map['date'] != null),
         assert(map['hour'] != null),
+        assert(map['completed'] != null),
         title = map['title'],
         date = map['date'],
-        hour = map['hour'];
+        hour = map['hour'],
+        completed = map['completed'];
 
   TodoRecord.fromSnapshot(DocumentSnapshot snapshot)
       : this.fromMap(snapshot.data, reference: snapshot.reference);
@@ -377,7 +394,7 @@ class TodoRecord {
   static get map => null;
 
   @override
-  String toString() => "Record<$title:$date:$hour>";
+  String toString() => "Record<$title:$date:$hour:$completed>";
 }
 
 Widget slideRightBackground() {

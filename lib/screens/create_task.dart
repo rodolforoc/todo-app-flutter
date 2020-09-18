@@ -85,7 +85,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     Map<String, dynamic> todoData = {
       "title": todoTitle,
       "date": _dateTime,
-      "hour": _time.format(context)
+      "hour": _time.format(context),
+      "completed": false
     };
 
     DocumentReference documentReference =
