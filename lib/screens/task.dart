@@ -37,7 +37,10 @@ class _TaskScreenState extends State<TaskScreen> {
 
   Widget _buildBody(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection('mytodos').snapshots(),
+      stream: Firestore.instance
+          .collection('mytodos')
+          .orderBy('date', descending: false)
+          .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
 
