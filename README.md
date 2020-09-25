@@ -48,6 +48,6 @@ Dentro da pasta /todo-app-flutter rode os seguintes comandos:
 # Rode a Aplicação Mobile
 $ Run 'main.dart'
 
-# running 
+# running on Emulator
 ```
 
