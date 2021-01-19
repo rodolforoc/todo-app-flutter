@@ -1,5 +1,8 @@
 ### Todo App Flutter
 Aplicação Mobile feita com [Flutter](https://flutter.dev/) para gerenciar lista de Tarefas armazenando os dados no [Firebase](https://firebase.google.com/).
+<h4 align="center">
+  ⚠️ Código em refatoração⚠️
+</h4>
 
 ## Tecnologias
 - [Flutter](https://flutter.dev/)
