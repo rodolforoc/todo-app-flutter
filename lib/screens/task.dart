@@ -392,7 +392,7 @@ class TodoRecord {
         completed = map['completed'];
 
   TodoRecord.fromSnapshot(DocumentSnapshot snapshot)
-      : this.fromMap(snapshot.data, reference: snapshot.reference);
+      : this.fromMap(snapshot.data(), reference: snapshot.reference);
 
   static get map => null;
 

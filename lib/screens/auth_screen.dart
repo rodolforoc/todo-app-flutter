@@ -1,5 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:todo_app/model/auth_data.dart';
 import 'package:todo_app/widgets/auth_form.dart';
+import '../widgets/auth_banner.dart';
 
 class AuthScreen extends StatefulWidget {
   @override
@@ -7,8 +11,50 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  bool _isLoading = false;
+  final _auth = FirebaseAuth.instance;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool _isLoading = false;
+
+  Future<void> _handleSubmit(AuthData authData) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    UserCredential authResult;
+
+    try {
+      if (authData.isLogin) {
+        authResult = await _auth.signInWithEmailAndPassword(
+          email: authData.email.trim(),
+          password: authData.password,
+        );
+      } else {
+        authResult = await _auth.createUserWithEmailAndPassword(
+          email: authData.email.trim(),
+          password: authData.password,
+        );
+      }
+
+      // final userData = {
+      //   'name': authData.name,
+      //   'email': authData.email,
+      // }
+
+    } on PlatformException catch (err) {
+      final msg = err.message ?? 'Ocorreu um erro! Verifique suas credenciais';
+
+      _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          content: Text(msg),
+          backgroundColor: Theme.of(context).errorColor,
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +66,10 @@ class _AuthScreenState extends State<AuthScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              AuthBanner('My Todo List'),
               Stack(
                 children: [
-                  AuthForm(null),
+                  AuthForm(_handleSubmit),
                   if (_isLoading)
                     Positioned.fill(
                       child: Container(
