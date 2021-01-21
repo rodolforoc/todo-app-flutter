@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:todo_app/model/auth_data.dart';
@@ -35,11 +36,15 @@ class _AuthScreenState extends State<AuthScreen> {
         );
       }
 
-      // final userData = {
-      //   'name': authData.name,
-      //   'email': authData.email,
-      // }
+      final userData = {
+        'name': authData.name,
+        'email': authData.email,
+      };
 
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(authResult.user.uid)
+          .set(userData);
     } on PlatformException catch (err) {
       final msg = err.message ?? 'Ocorreu um erro! Verifique suas credenciais';
 
