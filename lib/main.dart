@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_app/screens/auth_screen.dart';
 import 'package:todo_app/screens/create_task.dart';
 import 'package:todo_app/screens/task.dart';
+import 'package:todo_app/screens/task_list_screen.dart';
 import 'package:todo_app/utils/app_routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -44,7 +45,7 @@ class MyApp extends StatelessWidget {
                   stream: FirebaseAuth.instance.authStateChanges(),
                   builder: (ctx, userSnapshot) {
                     if (userSnapshot.hasData) {
-                      return TaskScreen();
+                      return TaskListScreen();
                     } else {
                       return AuthScreen();
                     }

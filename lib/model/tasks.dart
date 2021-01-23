@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:todo_app/model/task.dart';
 
 class Tasks {
@@ -16,9 +17,26 @@ class Tasks {
     _items.clear();
   }
 
-  Future<void> addTask() async {}
+  Future<void> addTask(Task newTask) async {
+    Map<String, dynamic> newTaskData = {
+      "title": newTask.title,
+      "date": newTask.date,
+      "hour": newTask.hour,
+      "iscompleted": newTask.isCompleted,
+      "isremindon": newTask.isRemindOn,
+      "userId": _userId,
+    };
 
-  Future<void> updateTask() async {}
+    DocumentReference documentReference =
+        FirebaseFirestore.instance.collection('tasks').doc();
+    documentReference.set(newTaskData);
+  }
 
-  Future<void> deleteTask() async {}
+  Future<void> updateTask(Task task) async {}
+
+  Future<void> deleteTask(String id) async {
+    DocumentReference documentReference =
+        FirebaseFirestore.instance.collection('tasks').doc(id);
+    documentReference.delete();
+  }
 }
