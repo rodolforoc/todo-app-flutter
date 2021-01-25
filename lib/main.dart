@@ -36,20 +36,24 @@ class MyApp extends StatelessWidget {
               ),
             ),
             visualDensity: VisualDensity.adaptivePlatformDensity,
+            textTheme: GoogleFonts.poppinsTextTheme(),
           ),
           home: appSnapshot.connectionState == ConnectionState.waiting
               ? Center(
                   child: CircularProgressIndicator(),
                 )
-              : StreamBuilder(
-                  stream: FirebaseAuth.instance.authStateChanges(),
-                  builder: (ctx, userSnapshot) {
-                    if (userSnapshot.hasData) {
-                      return TaskListScreen();
-                    } else {
-                      return AuthScreen();
-                    }
-                  },
+              : Material(
+                  type: MaterialType.transparency,
+                  child: StreamBuilder(
+                    stream: FirebaseAuth.instance.authStateChanges(),
+                    builder: (ctx, userSnapshot) {
+                      if (userSnapshot.hasData) {
+                        return TaskListScreen();
+                      } else {
+                        return AuthScreen();
+                      }
+                    },
+                  ),
                 ),
         );
       },

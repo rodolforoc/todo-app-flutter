@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:todo_app/model/task.dart';
 
 class TaskTile extends StatelessWidget {
   final Task task;
   final String userId;
+  final Function(String id) deleteTask;
 
   TaskTile({
     @required this.task,
     @required this.userId,
+    @required this.deleteTask,
   });
 
   @override
@@ -19,6 +20,8 @@ class TaskTile extends StatelessWidget {
         onDoubleTap: () {},
         child: Dismissible(
           key: ValueKey(task.id),
+          background: slideRightBackground(),
+          secondaryBackground: slideLeftBackground(),
           confirmDismiss: (direction) async {
             if (direction == DismissDirection.endToStart) {
               final bool res = await showDialog(
@@ -41,7 +44,10 @@ class TaskTile extends StatelessWidget {
                             "Delete",
                             style: TextStyle(color: Colors.red),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            deleteTask(task.id);
+                            Navigator.of(context).pop();
+                          },
                         ),
                       ],
                     );
@@ -72,12 +78,12 @@ class TaskTile extends StatelessWidget {
                     SizedBox(
                       width: 4,
                     ),
-                    //record.completed == true ?
-                    Icon(
-                      Icons.check_circle,
-                      color: Colors.purple,
-                    )
-                    //  : Container()
+                    task.isCompleted == true
+                        ? Icon(
+                            Icons.check_circle,
+                            color: Colors.purple,
+                          )
+                        : Container()
                   ],
                 ),
                 SizedBox(
@@ -117,4 +123,62 @@ class TaskTile extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget slideRightBackground() {
+  return Container(
+    color: Colors.purple[400],
+    child: Align(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          SizedBox(
+            width: 20,
+          ),
+          Icon(
+            Icons.edit,
+            color: Colors.white,
+          ),
+          Text(
+            " Edit",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+            textAlign: TextAlign.left,
+          ),
+        ],
+      ),
+      alignment: Alignment.centerLeft,
+    ),
+  );
+}
+
+Widget slideLeftBackground() {
+  return Container(
+    color: Colors.red,
+    child: Align(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Icon(
+            Icons.delete,
+            color: Colors.white,
+          ),
+          Text(
+            " Delete",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+            textAlign: TextAlign.right,
+          ),
+          SizedBox(
+            width: 20,
+          ),
+        ],
+      ),
+      alignment: Alignment.centerRight,
+    ),
+  );
 }

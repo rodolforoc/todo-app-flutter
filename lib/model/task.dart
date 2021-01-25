@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 
 class Task {
@@ -8,6 +9,7 @@ class Task {
   String category;
   bool isRemindOn;
   bool isCompleted;
+  String _userId;
 
   Task({
     this.id,
